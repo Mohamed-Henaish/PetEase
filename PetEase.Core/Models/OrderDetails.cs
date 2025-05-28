@@ -1,10 +1,6 @@
-﻿using PetEase.Core.Models.Enum;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PetEase.Core.Models
 {
@@ -12,13 +8,30 @@ namespace PetEase.Core.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
+        [ForeignKey("OrderHeader")]
         public int OrderHeaderId { get; set; }
-        public OrderHeader? orderHeader { get; set; }
-
-        public int productId { get; set; }
-        public Product? product { get; set; }
+        [JsonIgnore]
+        public virtual OrderHeader? OrderHeader { get; set; }
+        [Required]
+        [ForeignKey("Product")]
+        public int ProductId { get; set; }
+        public virtual Product? Product { get; set; }
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1")]
         public int Quantity { get; set; }
+        [Required]
+        [ForeignKey("Shop")]
         public int ShopId { get; set; }
-        public Shop? shop { get; set; }
+        public virtual Shop? Shop { get; set; }
+        [Required]
+        [Column(TypeName = "decimal(18,2)")]
+        [Range(0, double.MaxValue, ErrorMessage = "Price must be positive")]
+        public decimal UnitPrice { get; set; } 
+        [NotMapped]
+        public decimal TotalUnitPrice => UnitPrice * Quantity;
     }
 }
+// --> UnitPrice
+// Stores the product's price at the moment of purchase.
+// Protects against future price changes (if the product's price changes later, the order history remains accurate)

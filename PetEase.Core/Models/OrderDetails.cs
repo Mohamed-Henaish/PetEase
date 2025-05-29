@@ -7,6 +7,7 @@ namespace PetEase.Core.Models
     public class OrderDetails
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
         [ForeignKey("OrderHeader")]
@@ -21,9 +22,7 @@ namespace PetEase.Core.Models
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1")]
         public int Quantity { get; set; }
         [Required]
-        [ForeignKey("Shop")]
         public int ShopId { get; set; }
-        public virtual Shop? Shop { get; set; }
         [Required]
         [Column(TypeName = "decimal(18,2)")]
         [Range(0, double.MaxValue, ErrorMessage = "Price must be positive")]

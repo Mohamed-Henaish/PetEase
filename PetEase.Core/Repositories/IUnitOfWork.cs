@@ -1,5 +1,7 @@
 ﻿
 
+using PetEase.Core.Models;
+
 namespace PetEase.Core.Repositories
 {
     public interface IUnitOfWork : IDisposable
@@ -9,6 +11,10 @@ namespace PetEase.Core.Repositories
         IOrderDetailsRepository OrderDetailsRepository { get; }
         IOrderHeaderRepository OrderHeaderRepository { get; }
         IShopRepository ShopRepository { get; }
+        ITrainingVideoRepository TrainingVideoRepository { get; }
+        IDoctorRequestRepository DoctorRequestRepository { get; }
+
         Task CompleteAsync();
     }
 }
+    

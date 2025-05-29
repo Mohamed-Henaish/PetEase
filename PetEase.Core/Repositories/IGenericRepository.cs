@@ -16,5 +16,6 @@ namespace PetEase.Core.Repositories
         // _context.TbChat.Remove(item);
         Task RemoveAsync(T entity);
         Task RemoveRangeAsync(IEnumerable<T> entities);
+        Task UpdateAsync(T entity);
     }
 }

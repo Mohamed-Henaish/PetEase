@@ -9,5 +9,9 @@ namespace PetEase.Core.Repositories
 {
     public interface IDoctorRepository : IGenericRepository<Doctor>
     {
+        Task<(IEnumerable<Doctor> Doctors, int TotalCount)> GetPagedDoctorsAsync(
+        string? searchTerm,
+        int pageNumber,
+        int pageSize);
     }
 }

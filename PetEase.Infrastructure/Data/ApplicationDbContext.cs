@@ -14,7 +14,6 @@ namespace PetEase.Infrastructure.Data
         public virtual DbSet<OrderDetails> TbOrderDetails { get; set; }
         public virtual DbSet<TimeSlot> TbTimeSlot { get; set; }
         public virtual DbSet<TrainingVideo> TbTrainingVideo { get; set; }
-        public virtual DbSet<DoctorRequest> TbDoctorRequest { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

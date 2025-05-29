@@ -6,7 +6,6 @@ using PetEase.Core.Models;
 using PetEase.Core.Repositories;
 using PetEase.Infrastructure.Data;
 using PetEase.Infrastructure.RepositoriesImp;
-using PetEase.Infrastructure.Services;
 using PetEase.Services.Interface;
 using PetEase.Services.Service;
 
@@ -35,9 +34,6 @@ builder.Services.AddSwaggerGen();
 // Service
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IShopService, ShopService>();
-builder.Services.AddScoped<ITrainingVideoService, TrainingVideoService>();
-builder.Services.AddScoped<IDoctorService, DoctorService>();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

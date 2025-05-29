@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\PetEase.Core\PetEase.Core.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PetEase.Core.Models;
 
 namespace PetEase.Services.Interface
 {
     public interface IShopService
     {
+        Task<IEnumerable<Shop>> GetAllAsync();
+        Task<Shop?> GetByIdAsync(int id);
+        Task<bool> CreateAsync(Shop shop);
+        Task<bool> UpdateAsync(Shop shop);
+        Task<bool> DeleteAsync(int id);
     }
 }

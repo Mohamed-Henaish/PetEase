@@ -11,5 +11,19 @@ namespace PetEase.Infrastructure.RepositoriesImp
         {
             _context = context;
         }
+        public void Update(Shop shop)
+        {
+            var shopInDb = _context.TbShop.FirstOrDefault(x => x.Id == shop.Id);
+            if (shopInDb != null)
+            {
+                shopInDb.Name = shop.Name;
+                shopInDb.LogoUrl = shop.LogoUrl;
+                shopInDb.ContactEmail = shop.ContactEmail;
+                shopInDb.ContactPhone = shop.ContactPhone;
+                shopInDb.Description = shop.Description;
+                shopInDb.IsActive = shop.IsActive;
+                shopInDb.LastUpdated = DateTime.Now;
+            }
+        }
     }
 }

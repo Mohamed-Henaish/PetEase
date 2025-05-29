@@ -1,14 +1,15 @@
-﻿using PetEase.Services.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PetEase.Core.Repositories;
+using PetEase.Services.Interface;
 
 namespace PetEase.Services.Service
 {
     public class ProductService : IProductService
     {
+        private readonly IUnitOfWork _unitOfWork;
+        public ProductService(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
         // Create Product
         // Get all Products
         // Get Product by Id

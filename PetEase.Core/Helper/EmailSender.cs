@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Net;
 using System.Net.Mail;
+using System.Threading.Tasks;
 
 namespace PetEase.Core.Helper
 {
@@ -23,32 +24,28 @@ namespace PetEase.Core.Helper
             _isBodyHtml = isBodyHtml;
         }
 
-        public Task SendEmailAsync(string to, string subject, string htmlMessage)
+        public async Task SendEmailAsync(string to, string subject, string htmlMessage)
         {
-            try
+            using var message = new MailMessage(_email, to)
             {
-                var message = new MailMessage(_email, to)
-                {
-                    Subject = subject,
-                    Body = htmlMessage,
-                    IsBodyHtml = _isBodyHtml
-                };
+                Subject = subject,
+                Body = htmlMessage,
+                IsBodyHtml = _isBodyHtml
+            };
 
-                var credentials = new NetworkCredential(_email, _password);
-                var smtpClient = new SmtpClient(_host)
-                {
-                    EnableSsl = _ssl,
-                    Port = _port,
-                    Credentials = credentials
-                };
+            var credentials = new NetworkCredential(_email, _password);
 
-                smtpClient.Send(message);
-                return Task.CompletedTask;
-            }
-            catch (Exception ex)
+            using var smtpClient = new SmtpClient(_host)
             {
-                throw new InvalidOperationException("Failed to send email", ex);
-            }
+                Port = _port,
+                Credentials = credentials,
+                EnableSsl = _ssl,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false
+            };
+
+            await smtpClient.SendMailAsync(message);
         }
+
     }
 }

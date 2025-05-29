@@ -11,6 +11,8 @@ namespace PetEase.Infrastructure.RepositoriesImp
         public IOrderDetailsRepository OrderDetailsRepository { get; private set; }
         public IOrderHeaderRepository OrderHeaderRepository { get; private set; }
         public IShopRepository ShopRepository { get; private set; }
+        public ITrainingVideoRepository TrainingVideoRepository { get; private set; }
+        public IDoctorRequestRepository DoctorRequestRepository { get; private set; }
         public UnitOfWork(ApplicationDbContext context)
         {
             _ = context;
@@ -19,6 +21,8 @@ namespace PetEase.Infrastructure.RepositoriesImp
             OrderDetailsRepository = new OrderDetailsRepository(context);
             ShopRepository = new ShopRepository(context);
             OrderHeaderRepository = new OrderHeaderRepository(context);
+            TrainingVideoRepository = new TrainingVideoRepository(context);
+            DoctorRequestRepository = new DoctorRequestRepository(context);
         }
         public Task CompleteAsync()
         {

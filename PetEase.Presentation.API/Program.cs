@@ -6,6 +6,8 @@ using PetEase.Core.Models;
 using PetEase.Core.Repositories;
 using PetEase.Infrastructure.Data;
 using PetEase.Infrastructure.RepositoriesImp;
+using PetEase.Services.Interface;
+using PetEase.Services.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 // Database Config
@@ -29,7 +31,9 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+// Service
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IShopService, ShopService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

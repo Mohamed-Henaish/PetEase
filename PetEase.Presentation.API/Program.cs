@@ -1,9 +1,32 @@
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using PetEase.Core.Helper;
+using PetEase.Core.Models;
+using PetEase.Core.Repositories;
+using PetEase.Infrastructure.Data;
+using PetEase.Infrastructure.RepositoriesImp;
+
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
+// Database Config
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Email Config
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<IEmailSender>(provider =>
+{
+    var emailSettings = provider.GetRequiredService<IOptions<EmailSettings>>().Value;
+    return new EmailSender(
+        emailSettings.Email,
+        emailSettings.Password,
+        emailSettings.Host,
+        emailSettings.Ssl,
+        emailSettings.Port,
+        emailSettings.IsBodyHtml
+    );
+});
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

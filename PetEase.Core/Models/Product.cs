@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PetEase.Core.Models.Enum;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -34,6 +35,10 @@ namespace PetEase.Core.Models
         [Required]
         [ForeignKey("Shop")]
         public int ShopId { get; set; }
+        [Required]
+        public ProductType ProductType { get; set; }
+        [Required]
+        public AnimalType AnimalType { get; set; }
         [JsonIgnore]
         public virtual Shop? Shop { get; set; }
     }

@@ -37,5 +37,9 @@ namespace PetEase.Infrastructure.Services
             await _uow.TrainingVideoRepository.RemoveAsync(entity);
             await _uow.CompleteAsync();
         }
+        public async Task<(IEnumerable<TrainingVideo>, int)> GetPagedVideosAsync(string? searchTerm, int pageNumber, int pageSize)
+        {
+            return await _uow.TrainingVideoRepository.GetPagedVideosAsync(searchTerm, pageNumber, pageSize);
+        }
     }
 }

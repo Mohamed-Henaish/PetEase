@@ -14,9 +14,9 @@ namespace PetEase.Presentation.API.Controllers
             _doctorService = doctorService;
         }
 
-        // GET api/doctor?searchTerm=abc&pageNumber=1&pageSize=10
-        [HttpGet]
-        public async Task<IActionResult> GetDoctors([FromQuery] string? searchTerm, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        // GET api/doctor/search?searchTerm=abc&pageNumber=1&pageSize=10
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string? searchTerm, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var (doctors, totalCount) = await _doctorService.GetDoctorsAsync(searchTerm, pageNumber, pageSize);
             return Ok(new

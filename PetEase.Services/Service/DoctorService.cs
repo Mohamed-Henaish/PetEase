@@ -35,13 +35,64 @@ namespace PetEase.Infrastructure.Services
 
         public async Task<bool> UpdateDoctorAsync(Doctor doctor)
         {
-            var exDoctor = await GetDoctorByIdAsync(doctor.Id);
+            var exDoctor = await _unitOfWork.DoctorRepository.GetFirstorDefaultAsync(x=>x.Id==doctor.Id);
             if (exDoctor == null) return false;
 
-            await _unitOfWork.DoctorRepository.UpdateAsync(doctor);
+            exDoctor.Name = doctor.Name;
+            exDoctor.ConsultationPrice = doctor.ConsultationPrice;
+            exDoctor.PhotoUrl = doctor.PhotoUrl;
+            exDoctor.ContactNumber = doctor.ContactNumber;
+            exDoctor.Email = doctor.Email;
+
+           
+            if (exDoctor.Address == null && doctor.Address != null)
+            {
+                exDoctor.Address = doctor.Address;
+            }
+            else if (exDoctor.Address != null && doctor.Address != null)
+            {
+               
+                exDoctor.Address.Location = doctor.Address.Location;
+                exDoctor.Address.City = doctor.Address.City;
+                exDoctor.Address.State = doctor.Address.State;
+                exDoctor.Address.Country = doctor.Address.Country;
+            }
+            else if (doctor.Address == null)
+            {
+                exDoctor.Address = null; 
+            }
+
+            var timeSlotsToRemove = exDoctor.TimeSlots
+                .Where(ts => !doctor.TimeSlots.Any(dts => dts.Id == ts.Id))
+                .ToList();
+
+            foreach (var tsRemove in timeSlotsToRemove)
+            {
+                exDoctor.TimeSlots.Remove(tsRemove);
+            }
+
+           
+            foreach (var ts in doctor.TimeSlots)
+            {
+                var existingTs = exDoctor.TimeSlots.FirstOrDefault(t => t.Id == ts.Id);
+                if (existingTs != null)
+                {
+                   
+                    existingTs.StartTime = ts.StartTime;
+                    existingTs.EndTime = ts.EndTime;
+                    existingTs.IsAvailable = ts.IsAvailable;
+                }
+                else
+                {
+                   
+                    exDoctor.TimeSlots.Add(ts);
+                }
+            }
+
             await _unitOfWork.CompleteAsync();
             return true;
         }
+
 
         public async Task DeleteDoctorAsync(int id)
         {

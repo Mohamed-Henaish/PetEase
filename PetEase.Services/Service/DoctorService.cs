@@ -56,28 +56,62 @@ namespace PetEase.Infrastructure.Services
             await _unitOfWork.DoctorRequestRepository.AddAsync(request);
             await _unitOfWork.CompleteAsync();
 
-            string vendorSubject = "New Doctor Reservation";
-            string vendorBody = $@"
-                New reservation for Dr. {doctor.Name}.<br/>
-                Patient Name: {request.UserName}<br/>
-                Phone: {request.UserPhone}<br/>
-                Email: {request.UserEmail}<br/>
-                Time: {request.ReservedTime}
-            ";
+            // Email styles (inline CSS)
+            string emailStyle = @"
+        body { font-family: Arial, sans-serif; color: #333; font-size: 14px; }
+        .container { padding: 20px; }
+        h2 { color: #2a9df4; }
+        p { line-height: 1.6; }
+        .highlight { font-weight: bold; color: #444; }
+        .footer { margin-top: 30px; font-size: 12px; color: #888; }
+    ";
 
-            string userSubject = "Reservation Received";
+            // Vendor (Doctor) email body
+            string vendorBody = $@"
+    <html>
+    <head><style>{emailStyle}</style></head>
+    <body>
+      <div class='container'>
+        <h2>New Doctor Reservation</h2>
+        <p>You have a new reservation for Dr. <span class='highlight'>{doctor.Name}</span>.</p>
+        <p><strong>Patient Details:</strong></p>
+        <p>
+          Name: {request.UserName}<br/>
+          Phone: {request.UserPhone}<br/>
+          Email: {request.UserEmail}<br/>
+          Reserved Time: {request.ReservedTime:yyyy-MM-dd HH:mm}
+        </p>
+        <p>Please review and confirm the reservation at your earliest convenience.</p>
+        <p class='footer'>This is an automated notification from PetEase system.</p>
+      </div>
+    </body>
+    </html>
+    ";
+
+            // User (Patient) email body
             string userBody = $@"
-                Dear {request.UserName},<br/>
-                Your reservation with Dr. {doctor.Name} at {request.ReservedTime} is received.<br/>
-                We will notify you once confirmed.<br/>Thanks!
-            ";
+    <html>
+    <head><style>{emailStyle}</style></head>
+    <body>
+      <div class='container'>
+        <h2>Reservation Received</h2>
+        <p>Dear <span class='highlight'>{request.UserName}</span>,</p>
+        <p>Your reservation with Dr. <strong>{doctor.Name}</strong> at <strong>{request.ReservedTime:yyyy-MM-dd HH:mm}</strong> has been received.</p>
+        <p>We will notify you once your reservation is confirmed.</p>
+        <p>Thank you for choosing PetEase!</p>
+        <p class='footer'>If you have any questions, reply to this email or contact support.</p>
+      </div>
+    </body>
+    </html>
+    ";
 
             if (!string.IsNullOrEmpty(doctor.Email))
-                await _emailSender.SendEmailAsync(doctor.Email, vendorSubject, vendorBody);
+                await _emailSender.SendEmailAsync(doctor.Email, "New Doctor Reservation", vendorBody);
 
-            await _emailSender.SendEmailAsync(request.UserEmail, userSubject, userBody);
+            await _emailSender.SendEmailAsync(request.UserEmail, "Reservation Received", userBody);
 
             return request;
         }
+
     }
 }

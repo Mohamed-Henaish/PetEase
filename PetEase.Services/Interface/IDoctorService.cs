@@ -8,6 +8,6 @@ namespace PetEase.Services.Interface
         Task<Doctor> GetDoctorByIdAsync(int id);
         Task<Doctor> CreateDoctorAsync(Doctor doctor);
         Task<bool> UpdateDoctorAsync(Doctor doctor);
-        Task DeleteDoctorAsync(int id);
+        Task<bool> DeleteDoctorAsync(int id);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PetEase.Core.DTOs;
 using PetEase.Core.Models;
 using PetEase.Core.Repositories;
 using PetEase.Infrastructure.Data;
@@ -14,17 +15,17 @@ namespace PetEase.Infrastructure.RepositoriesImp
             _context = context;
             _dbSet = _context.Set<Shop>();
         }
-        public void Update(Shop shop)
+        public void Update(ShopDto shopDto)
         {
-            var shopInDb = _context.TbShop.FirstOrDefault(x => x.Id == shop.Id);
+            var shopInDb = _context.TbShop.FirstOrDefault(x => x.Id == shopDto.Id);
             if (shopInDb != null)
             {
-                shopInDb.Name = shop.Name;
-                shopInDb.LogoUrl = shop.LogoUrl;
-                shopInDb.ContactEmail = shop.ContactEmail;
-                shopInDb.ContactPhone = shop.ContactPhone;
-                shopInDb.Description = shop.Description;
-                shopInDb.IsActive = shop.IsActive;
+                shopInDb.Name = shopDto.Name;
+                shopInDb.LogoUrl = shopDto.LogoUrl;
+                shopInDb.ContactEmail = shopDto.ContactEmail;
+                shopInDb.ContactPhone = shopDto.ContactPhone;
+                shopInDb.Description = shopDto.Description;
+                shopInDb.IsActive = shopDto.IsActive;
                 shopInDb.LastUpdated = DateTime.Now;
             }
         }

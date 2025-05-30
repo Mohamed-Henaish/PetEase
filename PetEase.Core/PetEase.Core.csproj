@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Repositories\IDoctorRequestRepository.cs" />
   </ItemGroup>
 

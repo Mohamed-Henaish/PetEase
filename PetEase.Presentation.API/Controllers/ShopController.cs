@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using PetEase.Core.DTOs;
 using PetEase.Core.Models;
 using PetEase.Infrastructure.Services;
 using PetEase.Services.Interface;
@@ -15,16 +16,32 @@ namespace PetEase.Presentation.API.Controllers
         {
             _shopService = shopService;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetShop([FromQuery] string? searchTerm, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        [HttpGet("search")]
+        public async Task<IActionResult> GetShop(
+                [FromQuery] string? searchTerm,
+                [FromQuery] int pageNumber = 1,
+                [FromQuery] int pageSize = 10)
         {
             var (shops, totalCount) = await _shopService.GetShopAsync(searchTerm, pageNumber, pageSize);
+            var data = shops.Select(shop => new
+            {
+                shop.Id,
+                shop.Name,
+                shop.LogoUrl,
+                shop.ContactEmail,
+                shop.ContactPhone,
+                shop.Description,
+                shop.CreatedAt,
+                shop.LastUpdated,
+                shop.IsActive
+            });
+
             return Ok(new
             {
                 TotalCount = totalCount,
                 PageNumber = pageNumber,
                 PageSize = pageSize,
-                Data = shops
+                Data = data
             });
         }
 
@@ -45,31 +62,49 @@ namespace PetEase.Presentation.API.Controllers
             {
                 success = true,
                 message = "Shop retrieved successfully",
-                data = shop
+                data = new
+                {
+                    shop.Id,
+                    shop.Name,
+                    shop.LogoUrl,
+                    shop.ContactEmail,
+                    shop.ContactPhone,
+                    shop.Description,
+                    shop.CreatedAt,
+                    shop.LastUpdated,
+                    shop.IsActive
+                }
             });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Shop shop)
+        public async Task<IActionResult> Create([FromBody] ShopDto shopDto)
         {
             if (!ModelState.IsValid)
-            {
-                return BadRequest(new
-                {
-                    success = false,
-                    message = "Validation failed",
-                    errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
-                });
-            }
+                return BadRequest(ModelState);
 
-            var created = await _shopService.CreateShopAsync(shop);
-            return CreatedAtAction(nameof(GetShopById), new { id = created.Id }, created);
+            var createdShop = await _shopService.CreateShopAsync(shopDto);
+            return Ok(new
+            {
+                message = "Shop created successfully",
+                data = new
+                {
+                    createdShop.Id,
+                    createdShop.Name,
+                    createdShop.LogoUrl,
+                    createdShop.ContactEmail,
+                    createdShop.ContactPhone,
+                    createdShop.Description,
+                    createdShop.CreatedAt,
+                    createdShop.IsActive
+                }
+            });
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Shop shop)
+        public async Task<IActionResult> Update(int id, [FromBody] ShopDto shopDto)
         {
-            if (id != shop.Id)
+            if (id != shopDto.Id)
             {
                 return BadRequest(new
                 {
@@ -77,18 +112,7 @@ namespace PetEase.Presentation.API.Controllers
                     message = "Shop ID mismatch"
                 });
             }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new
-                {
-                    success = false,
-                    message = "Validation failed",
-                    errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
-                });
-            }
-
-            var updated = await _shopService.UpdateAsync(shop);
+            var updated = await _shopService.UpdateAsync(shopDto);
             if (!updated)
             {
                 return NotFound(new

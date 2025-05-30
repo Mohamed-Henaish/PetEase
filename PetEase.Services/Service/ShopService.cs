@@ -1,4 +1,5 @@
-﻿using PetEase.Core.Models;
+﻿using PetEase.Core.DTOs;
+using PetEase.Core.Models;
 using PetEase.Core.Repositories;
 using PetEase.Services.Interface;
 
@@ -18,22 +19,34 @@ namespace PetEase.Services.Service
 
         public async Task<Shop?> GetShopByIdAsync(int id)
         {
-            return await _unitOfWork.ShopRepository.GetFirstorDefaultAsync(X => X.Id == id);
+            var shopbyId = await GetShopById(id);
+            return shopbyId;
         }
 
-        public async Task<Shop> CreateShopAsync(Shop shop)
+        public async Task<Shop> CreateShopAsync(ShopDto shopDto)
         {
+            var shop = new Shop
+            {
+                Name = shopDto.Name,
+                LogoUrl = shopDto.LogoUrl,
+                ContactEmail = shopDto.ContactEmail,
+                ContactPhone = shopDto.ContactPhone,
+                Description = shopDto.Description,
+                CreatedAt = DateTime.Now,
+                IsActive = shopDto.IsActive
+            };
+
             await _unitOfWork.ShopRepository.AddAsync(shop);
             await _unitOfWork.CompleteAsync();
             return shop;
         }
 
-        public async Task<bool> UpdateAsync(Shop shop)
+        public async Task<bool> UpdateAsync(ShopDto shopDto)
         {
-            var existing = await GetShopById(shop.Id);
+            var existing = await GetShopById(shopDto.Id);
             if (existing == null) return false;
 
-            _unitOfWork.ShopRepository.Update(shop);
+            _unitOfWork.ShopRepository.Update(shopDto);
             await _unitOfWork.CompleteAsync();
             return true;
         }
@@ -48,7 +61,7 @@ namespace PetEase.Services.Service
             return true;
         }
 
-        public async Task<Shop> GetShopById(int id)
+        private async Task<Shop> GetShopById(int id)
         {
             return await _unitOfWork.ShopRepository.GetFirstorDefaultAsync(d => d.Id == id);
         }

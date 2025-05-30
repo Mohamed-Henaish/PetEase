@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using PetEase.Core.Models;
+using PetEase.Infrastructure.Services;
 using PetEase.Services.Interface;
 
 namespace PetEase.Presentation.API.Controllers
@@ -14,21 +16,22 @@ namespace PetEase.Presentation.API.Controllers
             _shopService = shopService;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetShop([FromQuery] string? searchTerm, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var shops = await _shopService.GetAllAsync();
+            var (shops, totalCount) = await _shopService.GetShopAsync(searchTerm, pageNumber, pageSize);
             return Ok(new
             {
-                success = true,
-                message = "Shops retrieved successfully",
-                data = shops
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                Data = shops
             });
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetShopById(int id)
         {
-            var shop = await _shopService.GetByIdAsync(id);
+            var shop = await _shopService.GetShopByIdAsync(id);
             if (shop == null)
             {
                 return NotFound(new
@@ -59,22 +62,8 @@ namespace PetEase.Presentation.API.Controllers
                 });
             }
 
-            var isCreated = await _shopService.CreateAsync(shop);
-            if (!isCreated)
-            {
-                return BadRequest(new
-                {
-                    success = false,
-                    message = "Failed to create shop"
-                });
-            }
-
-            return Ok(new
-            {
-                success = true,
-                message = "Shop created successfully",
-                data = shop
-            });
+            var created = await _shopService.CreateShopAsync(shop);
+            return CreatedAtAction(nameof(GetShopById), new { id = created.Id }, created);
         }
 
         [HttpPut("{id}")]

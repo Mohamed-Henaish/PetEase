@@ -11,26 +11,26 @@ namespace PetEase.Services.Service
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<IEnumerable<Shop>> GetAllAsync()
+        public async Task<(IEnumerable<Shop>, int)> GetShopAsync(string? searchTerm, int pageNumber, int pageSize)
         {
-            return await _unitOfWork.ShopRepository.GetAllAsync();
+            return await _unitOfWork.ShopRepository.GetPagedShopAsync(searchTerm, pageNumber, pageSize);
         }
 
-        public async Task<Shop?> GetByIdAsync(int id)
+        public async Task<Shop?> GetShopByIdAsync(int id)
         {
             return await _unitOfWork.ShopRepository.GetFirstorDefaultAsync(X => X.Id == id);
         }
 
-        public async Task<bool> CreateAsync(Shop shop)
+        public async Task<Shop> CreateShopAsync(Shop shop)
         {
             await _unitOfWork.ShopRepository.AddAsync(shop);
             await _unitOfWork.CompleteAsync();
-            return true;
+            return shop;
         }
 
         public async Task<bool> UpdateAsync(Shop shop)
         {
-            var existing = await _unitOfWork.ShopRepository.GetFirstorDefaultAsync(X => X.Id == shop.Id);
+            var existing = await GetShopById(shop.Id);
             if (existing == null) return false;
 
             _unitOfWork.ShopRepository.Update(shop);
@@ -40,12 +40,17 @@ namespace PetEase.Services.Service
 
         public async Task<bool> DeleteAsync(int id)
         {
-            //var shop = await _unitOfWork.ShopRepository.GetFirstorDefaultAsync(X => X.Id == id);
-            //if (shop == null) return false;
+            var shop = await GetShopById(id);
+            if (shop == null) throw new Exception("Doctor not found");
 
-            //_unitOfWork.ShopRepository.RemoveRangeAsync(shop);
-            //await _unitOfWork.CompleteAsync();
+            await _unitOfWork.ShopRepository.RemoveAsync(shop);
+            await _unitOfWork.CompleteAsync();
             return true;
+        }
+
+        public async Task<Shop> GetShopById(int id)
+        {
+            return await _unitOfWork.ShopRepository.GetFirstorDefaultAsync(d => d.Id == id);
         }
     }
 }

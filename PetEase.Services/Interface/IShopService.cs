@@ -4,9 +4,9 @@ namespace PetEase.Services.Interface
 {
     public interface IShopService
     {
-        Task<IEnumerable<Shop>> GetAllAsync();
-        Task<Shop?> GetByIdAsync(int id);
-        Task<bool> CreateAsync(Shop shop);
+        Task<(IEnumerable<Shop>, int)> GetShopAsync(string? searchTerm, int pageNumber, int pageSize);
+        Task<Shop?> GetShopByIdAsync(int id);
+        Task<Shop> CreateShopAsync(Shop shop);
         Task<bool> UpdateAsync(Shop shop);
         Task<bool> DeleteAsync(int id);
     }

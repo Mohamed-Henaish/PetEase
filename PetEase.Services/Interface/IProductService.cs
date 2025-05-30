@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PetEase.Core.DTOs;
+using PetEase.Core.Models;
 
 namespace PetEase.Services.Interface
 {
     public interface IProductService
     {
+        Task<Product> CreateProductAsync(ProductDto productDto);
     }
 }

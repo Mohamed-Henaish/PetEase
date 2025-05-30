@@ -1,6 +1,5 @@
 ﻿using PetEase.Core.DTOs;
 using PetEase.Core.Models;
-using PetEase.Core.Models.Enum;
 using PetEase.Core.Repositories;
 using PetEase.Services.Interface;
 
@@ -13,9 +12,9 @@ namespace PetEase.Services.Service
         {
             _unitOfWork = unitOfWork;
         }
-        private async Task<Product> GetbyId(int id)
+        public async Task<(IEnumerable<Product>, int)> GetProductAsync(string? searchTerm, int pageNumber, int pageSize)
         {
-            return await _unitOfWork.ProductRepository.GetFirstorDefaultAsync(X => X.Id == id);
+            return await _unitOfWork.ProductRepository.GetPagedProductAsync(searchTerm, pageNumber, pageSize);
         }
         public async Task<Product> CreateProductAsync(ProductDto productDto)
         {
@@ -38,9 +37,30 @@ namespace PetEase.Services.Service
 
             return product;
         }
-        // Get all Products
-        // Get Product by Id
-        // Update Product
-        // Delete Product
+        public async Task<Product?> GetProductByIdAsync(int id)
+        {
+            return await GetbyId(id);
+        }
+        public async Task<bool> UpdateProductAsync(int id, ProductDto dto)
+        {
+            var product = await GetbyId(id);
+            if (product == null) return false;
+            _unitOfWork.ProductRepository.Update(dto);
+            await _unitOfWork.CompleteAsync();
+            return true;
+        }
+        public async Task<bool> DeleteProductAsync(int id)
+        {
+            var product = await GetbyId(id);
+            if (product == null) return false;
+
+            await _unitOfWork.ProductRepository.RemoveAsync(product);
+            await _unitOfWork.CompleteAsync();
+            return true;
+        }
+        private async Task<Product> GetbyId(int id)
+        {
+            return await _unitOfWork.ProductRepository.GetFirstorDefaultAsync(X => X.Id == id);
+        }
     }
 }

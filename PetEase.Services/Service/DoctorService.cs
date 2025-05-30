@@ -22,7 +22,8 @@ namespace PetEase.Infrastructure.Services
 
         public async Task<Doctor> GetDoctorByIdAsync(int id)
         {
-            return await _unitOfWork.DoctorRepository.GetFirstorDefaultAsync(d => d.Id == id);
+            return await _unitOfWork.DoctorRepository.
+                GetFirstorDefaultAsync(d => d.Id == id , IncludeWord: "Address,TimeSlots");
         }
 
         public async Task<Doctor> CreateDoctorAsync(Doctor doctor)
@@ -32,10 +33,14 @@ namespace PetEase.Infrastructure.Services
             return doctor;
         }
 
-        public async Task UpdateDoctorAsync(Doctor doctor)
+        public async Task<bool> UpdateDoctorAsync(Doctor doctor)
         {
+            var exDoctor = await GetDoctorByIdAsync(doctor.Id);
+            if (exDoctor == null) return false;
+
             await _unitOfWork.DoctorRepository.UpdateAsync(doctor);
             await _unitOfWork.CompleteAsync();
+            return true;
         }
 
         public async Task DeleteDoctorAsync(int id)

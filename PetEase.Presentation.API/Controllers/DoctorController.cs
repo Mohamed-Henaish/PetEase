@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PetEase.Core.Models;
 using PetEase.Services.Interface;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace PetEase.Presentation.API.Controllers
 {
     [ApiController]
@@ -52,10 +53,28 @@ namespace PetEase.Presentation.API.Controllers
         public async Task<IActionResult> UpdateDoctor(int id, [FromBody] Doctor doctor)
         {
             if (id != doctor.Id)
-                return BadRequest();
+            {
+                return NotFound(new
+                {
+                    success = false,
+                    message = $"Doctor with ID {id} not found"
+                });
+            }
 
-            await _doctorService.UpdateDoctorAsync(doctor);
-            return NoContent();
+            var isCreated = await _doctorService.UpdateDoctorAsync(doctor);
+            if (!isCreated)
+            {
+                return NotFound(new
+                {
+                    success = false,
+                    message = $"Doctor with ID {id} not found"
+                });
+            }
+            return Ok(new
+            {
+                success = true,
+                message = "Shop updated successfully"
+            });
         }
 
         // DELETE api/doctor/5

@@ -18,7 +18,9 @@ namespace PetEase.Infrastructure.RepositoriesImp
 
         public async Task<(IEnumerable<Doctor>, int)> GetPagedDoctorsAsync(string? searchTerm, int pageNumber, int pageSize)
         {
-            IQueryable<Doctor> query = _dbSet;
+            IQueryable<Doctor> query = _dbSet
+                .Include(d => d.Address)
+                .Include(d => d.TimeSlots);
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {

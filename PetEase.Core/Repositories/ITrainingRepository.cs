@@ -3,5 +3,7 @@ namespace PetEase.Core.Repositories
 {
     public interface ITrainingVideoRepository : IGenericRepository<TrainingVideo>
     {
+        Task<(IEnumerable<TrainingVideo> Videos, int TotalCount)> GetPagedVideosAsync(string? searchTerm, int pageNumber, int pageSize);
+
     }
 }

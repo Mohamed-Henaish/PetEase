@@ -44,5 +44,17 @@ namespace PetEase.Presentation.API.Controllers
             await _svc.DeleteAsync(id);
             return NoContent();
         }
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string? searchTerm, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            var (videos, totalCount) = await _svc.GetPagedVideosAsync(searchTerm, pageNumber, pageSize);
+            return Ok(new
+            {
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                Data = videos
+            });
+        }
     }
 }

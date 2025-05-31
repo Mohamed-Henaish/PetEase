@@ -73,7 +73,7 @@ namespace PetEase.Presentation.API.Controllers
             return Ok(new
             {
                 success = true,
-                message = "Shop updated successfully"
+                message = "Doctor updated successfully"
             });
         }
 

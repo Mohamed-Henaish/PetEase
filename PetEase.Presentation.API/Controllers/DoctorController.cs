@@ -81,8 +81,20 @@ namespace PetEase.Presentation.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDoctor(int id)
         {
-            await _doctorService.DeleteDoctorAsync(id);
-            return NoContent();
+            var isValid = await _doctorService.DeleteDoctorAsync(id);
+            if (!isValid)
+            {
+                return NotFound(new
+                {
+                    success = false,
+                    message = $"Doctor with ID {id} not found"
+                });
+            }
+            return Ok(new
+            {
+                success = true,
+                message = "Doctor deleted successfully"
+            });
         }
 
         // POST api/doctor/reserve

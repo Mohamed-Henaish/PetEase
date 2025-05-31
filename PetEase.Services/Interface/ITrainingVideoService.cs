@@ -6,8 +6,8 @@ namespace PetEase.Services.Interface
         Task<TrainingVideo> GetByIdAsync(int id);
         Task<IEnumerable<TrainingVideo>> GetAllAsync();
         Task<TrainingVideo> CreateAsync(TrainingVideo video);
-        Task UpdateAsync(TrainingVideo video);
-        Task DeleteAsync(int id);
+        Task<bool> UpdateAsync(TrainingVideo video);
+        Task<bool> DeleteAsync(int id);
         Task<(IEnumerable<TrainingVideo> Videos, int TotalCount)> GetPagedVideosAsync(string? searchTerm, int pageNumber, int pageSize);
     }
 

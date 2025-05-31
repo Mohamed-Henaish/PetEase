@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PetEase.Core.DTOs;
 using PetEase.Core.Models;
 using PetEase.Services.Interface;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace PetEase.Presentation.API.Controllers
 {
     [ApiController]
@@ -33,16 +35,48 @@ namespace PetEase.Presentation.API.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, TrainingVideo video)
         {
-            if (id != video.Id) return BadRequest();
-            await _svc.UpdateAsync(video);
-            return NoContent();
+            if (id != video.Id)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Video ID mismatch"
+                });
+            }
+            var updated = await _svc.UpdateAsync(video);
+            if (!updated)
+            {
+                return NotFound(new
+                {
+                    success = false,
+                    message = $"Video with ID {id} not found"
+                });
+            }
+            return Ok(new
+            {
+                success = true,
+                message = "Video updated successfully"
+            });
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _svc.DeleteAsync(id);
-            return NoContent();
+            var deleted = await _svc.DeleteAsync(id);
+            if (!deleted)
+            {
+                return NotFound(new
+                {
+                    success = false,
+                    message = $"Video with ID {id} not found"
+                });
+            }
+
+            return Ok(new
+            {
+                success = true,
+                message = "Video deleted successfully"
+            });
         }
         [HttpGet("search")]
         public async Task<IActionResult> Search([FromQuery] string? searchTerm, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)

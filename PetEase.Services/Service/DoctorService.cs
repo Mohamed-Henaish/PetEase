@@ -94,14 +94,15 @@ namespace PetEase.Infrastructure.Services
         }
 
 
-        public async Task DeleteDoctorAsync(int id)
+        public async Task<bool> DeleteDoctorAsync(int id)
         {
             var doctor = await GetDoctorByIdAsync(id);
             if (doctor == null)
-                throw new Exception("Doctor not found");
+                return false;
 
             await _unitOfWork.DoctorRepository.RemoveAsync(doctor);
             await _unitOfWork.CompleteAsync();
+            return true;
         }
         public async Task<DoctorRequest> ReserveDoctorAsync(DoctorRequest request)
         {

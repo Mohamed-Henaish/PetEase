@@ -28,6 +28,7 @@ builder.Services.AddTransient<IEmailSender>(provider =>
         emailSettings.IsBodyHtml
     );
 });
+builder.Services.AddHttpClient();
 builder.Services.AddControllers();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddEndpointsApiExplorer();

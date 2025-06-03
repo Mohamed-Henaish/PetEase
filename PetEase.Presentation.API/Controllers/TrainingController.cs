@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PetEase.Core.DTOs;
 using PetEase.Core.Models;
 using PetEase.Services.Interface;
@@ -24,14 +25,14 @@ namespace PetEase.Presentation.API.Controllers
             if (v == null) return NotFound();
             return Ok(v);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create(TrainingVideo video)
         {
             var created = await _svc.CreateAsync(video);
             return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, TrainingVideo video)
         {
@@ -58,7 +59,7 @@ namespace PetEase.Presentation.API.Controllers
                 message = "Video updated successfully"
             });
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {

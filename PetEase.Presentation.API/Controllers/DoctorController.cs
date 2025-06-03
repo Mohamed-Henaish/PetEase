@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PetEase.Core.Models;
 using PetEase.Services.Interface;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
@@ -41,6 +42,7 @@ namespace PetEase.Presentation.API.Controllers
         }
 
         // POST api/doctor
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateDoctor([FromBody] Doctor doctor)
         {
@@ -49,6 +51,7 @@ namespace PetEase.Presentation.API.Controllers
         }
 
         // PUT api/doctor/5
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateDoctor(int id, [FromBody] Doctor doctor)
         {
@@ -79,6 +82,7 @@ namespace PetEase.Presentation.API.Controllers
 
         // DELETE api/doctor/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteDoctor(int id)
         {
             var isValid = await _doctorService.DeleteDoctorAsync(id);
@@ -99,6 +103,7 @@ namespace PetEase.Presentation.API.Controllers
 
         // POST api/doctor/reserve
         [HttpPost("reserve")]
+        [Authorize]
         public async Task<IActionResult> ReserveDoctor([FromBody] DoctorRequest request)
         {
             try

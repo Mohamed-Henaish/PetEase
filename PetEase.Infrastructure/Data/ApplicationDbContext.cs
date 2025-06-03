@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PetEase.Core.Models;
 
 namespace PetEase.Infrastructure.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
         public virtual DbSet<Product> TbProduct { get; set; }
@@ -17,6 +19,15 @@ namespace PetEase.Infrastructure.Data
         public virtual DbSet<DoctorRequest> TbDoctorRequest { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Customize table names
+            modelBuilder.Entity<ApplicationUser>().ToTable("TbUser");
+            modelBuilder.Entity<IdentityRole>().ToTable("TbRoles");
+            modelBuilder.Entity<IdentityUserRole<string>>().ToTable("TbUserRoles");
+            modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("TbUserClaim");
+            // Ignore
+            modelBuilder.Ignore<IdentityUserLogin<string>>();
+            modelBuilder.Ignore<IdentityUserToken<string>>();
+            modelBuilder.Ignore<IdentityRoleClaim<string>>();
             base.OnModelCreating(modelBuilder);
         }
     }

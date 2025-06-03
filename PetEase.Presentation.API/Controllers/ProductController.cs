@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PetEase.Core.DTOs;
 using PetEase.Services.Interface;
 using PetEase.Services.Service;
@@ -30,6 +31,7 @@ namespace PetEase.Presentation.API.Controllers
             });
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> CreateProduct([FromBody] ProductDto productDto)
         {
@@ -81,6 +83,7 @@ namespace PetEase.Presentation.API.Controllers
             });
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto dto)
         {
@@ -107,6 +110,7 @@ namespace PetEase.Presentation.API.Controllers
             });
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
